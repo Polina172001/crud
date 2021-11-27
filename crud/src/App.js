@@ -10,10 +10,14 @@ import NoteTitle from "./components/NoteTitle";
 function App() {
   const [notes, setNotes] = useState([]);
 
+  const refresh = async () => {
+    const response = await createRequest({method: 'get'});
+    setNotes([...response]);
+  }
+
   useEffect(() => {
     const fetchData = async () => {
-      const response = await createRequest({method: 'get'});
-      setNotes([...response]);
+      refresh()
     }
     fetchData();
   }, []);
@@ -25,22 +29,19 @@ function App() {
         content: note
       }
       await createRequest({payload, method: 'post'});
-      const response = await createRequest({method: 'get'});
-      setNotes([...response])
+      refresh()
     } catch (error) {
       return <p>Error: {error}</p>
     }
   }
 
   const updateNotesHandler = async () => {
-    const response = await createRequest({method: 'get'});
-    setNotes([...response]);
+    refresh()
   }
 
   const deleteNoteHandler = async (id) => {
     await createRequest({id, method: 'delete'});
-    const response = await createRequest({method: 'get'});
-    setNotes([...response]);
+    refresh()
   }
 
   return (
